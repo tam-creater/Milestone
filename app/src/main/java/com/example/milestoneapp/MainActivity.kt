@@ -8,37 +8,90 @@ import android.widget.Button
 import com.example.milestoneapp.databinding.ActivityMainBinding
 import android.content.DialogInterface
 import android.content.Intent
+import android.util.TypedValue
+import android.view.Gravity
+import android.view.ViewGroup
+import android.widget.LinearLayout
+import android.widget.TextView
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityMainBinding
-
-    //データを格納（変更・追加不可）
-    private val milestoneData = mutableListOf(
-        mutableListOf("会議","研修について", "2023/7/10"),
-        mutableListOf("研修", "BS研修", "2023/7/12"),
-        mutableListOf("開発", "画面設計", "2023/7/20"),
-        mutableListOf("ミーティング", "7月の予定", "2023/6/15")
-    )
+    //マイルストーンデータの格納場所
+    private var milestoneData: ArrayList<List<String?>> = arrayListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        //setContentView(R.layout.activity_main)
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        val view = binding.root
-        setContentView(view)
 
-        //マイルストーンを表示
-        showMilestone()
+        //追加画面からの情報受け取り
+        var a = intent.getStringExtra("EDIT_TEXT")
+        var b = intent.getStringExtra("EDIT_INFORMATION")
+        var c = intent.getStringExtra("EDIT_DATE")
+
+        milestoneData.add(listOf(a,b,c))
+
+        //レイアウトの作成
+        val layout: LinearLayout = LinearLayout(this)
+        layout.orientation = LinearLayout.VERTICAL
+        layout.layoutParams = LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.MATCH_PARENT,
+            LinearLayout.LayoutParams.MATCH_PARENT
+        )
+        layout.gravity = Gravity.CENTER
+
+        //タイトルの作成
+        val titleLabel = TextView(this)
+        titleLabel.setText(R.string.title)
+
+        titleLabel.layoutParams = LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.WRAP_CONTENT,
+            LinearLayout.LayoutParams.WRAP_CONTENT
+        )
+
+        titleLabel.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 22F)
+
+        /*val MLP = titleLabel.layoutParams as ViewGroup.MarginLayoutParams
+        MLP.setMargins(0,0,10,74)
+        titleLabel.layoutParams = MLP*/
+        layout.addView(titleLabel)
+
+        //ボタンの作成
+        for(i in 0 until milestoneData.size) {
+            val btn = Button(this)
+            btn.text = milestoneData[i][0]
+            /*val MLPP = btn.layoutParams as ViewGroup.MarginLayoutParams
+            MLPP.setMargins(0,6,10,0)
+            titleLabel.layoutParams = MLPP*/
+            layout.addView(btn)
+
+            btn.setOnClickListener {
+                checkDetails(btn)
+            }
+        }
+
+        //追加ボタン
+        val addBtn = Button(this)
+        addBtn.setText(R.string.add_milestone)
+        /*val MLPPP = addBtn.layoutParams as ViewGroup.MarginLayoutParams
+        MLPPP.setMargins(0,6,10,0)
+        titleLabel.layoutParams = MLPPP*/
+        layout.addView(addBtn)
+
+        addBtn.setOnClickListener {
+            val intent = Intent(applicationContext, AddActivity::class.java)
+            startActivity(intent)
+        }
+
+        //画面を表示
+        setContentView(layout)
     }
 
     fun showMilestone() {
 
-        //マイルストーンのタイトルのみを格納
-        binding.Milestone1.text = milestoneData[0][0]
-        binding.Milestone2.text = milestoneData[1][0]
-        binding.Milestone3.text = milestoneData[2][0]
-        binding.Milestone4.text = milestoneData[3][0]
+        var a = intent.getStringExtra("EDIT_TEXT")
+        var b = intent.getStringExtra("EDIT_INFORMATION")
+        var c = intent.getStringExtra("EDIT_DATE")
+
+        //milestoneData.add(listOf(a,b,c))
 
         /*for(i in 0 until milestoneData.size) {
             binding.Milestone${i}.text = milestoneData[i][0]
@@ -46,15 +99,13 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    fun checkDetails(view: View){
-        //どのマイルストーンが選択されたか
-        val pushedBtn: Button = findViewById(view.id)
-        val btnText = pushedBtn.text.toString()
+    fun checkDetails(btn: Button){
 
-        //ダイアログのタイトル・詳細・日程を作成
-        var alertTitle: String = ""
-        var alertDetails: String = ""
-        var alertDate: String = ""
+        val btnText = btn.text.toString()
+
+        var alertTitle: String? = ""
+        var alertDetails: String? = ""
+        var alertDate: String? = ""
 
         for(i in 0 until milestoneData.size){
             if(btnText == milestoneData[i][0]){
@@ -72,10 +123,4 @@ class MainActivity : AppCompatActivity() {
             }
             .show()
     }
-
-    fun addMilestone(view: View) {
-        val intent = Intent(this@MainActivity, AddActivity::class.java)
-        startActivity(intent)
-    }
-
 }

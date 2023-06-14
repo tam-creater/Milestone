@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.example.milestoneapp.databinding.ActivityAddBinding
 import android.view.View
+import android.widget.EditText
 
 class AddActivity : AppCompatActivity() {
 
@@ -19,8 +20,15 @@ class AddActivity : AppCompatActivity() {
         setContentView(view)
     }
 
+
+    private val editText: EditText = findViewById(R.id.editText)
+    private val editInformation: EditText = findViewById(R.id.editInformation)
+    private val editDate:EditText = findViewById(R.id.editDate)
     fun backToMilestone(view: View) {
         val intent = Intent(this@AddActivity, MainActivity::class.java)
+        intent.putExtra("EDIT_TEXT", editText.text.toString())
+        intent.putExtra("EDIT_INFORMATION", editInformation.text.toString())
+        intent.putExtra("EDIT_DATE", editDate.text.toString())
         startActivity(intent)
     }
 }
