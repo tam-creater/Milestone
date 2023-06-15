@@ -11,4 +11,6 @@
     <string name="example_title">会議</string>
     <string name="example_information">アオイ商事様と7/8(木)に行ったBS研修の振り返り</string>
     <string name="example_date">2023/7/22</string>
+
+    <string name="noTitle">現在マイルストーンはありません</string>
 </resources>
